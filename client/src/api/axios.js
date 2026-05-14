@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://jobportal-vud0.onrender.com/api',
+  baseURL: 'https://jobportal-vud0.onrender.com/',
 });
 
 // Attach JWT token to every request
