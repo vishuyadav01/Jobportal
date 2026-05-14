@@ -17,6 +17,11 @@ app.use(cors({
   credentials: true
 }));
 
+// Root Route
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to HireSphere API' });
+});
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
