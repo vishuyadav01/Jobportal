@@ -53,7 +53,7 @@ HireSphere is a modern, full-stack recruitment platform built with the MERN stac
 3. **Frontend Setup**
    - Go to the `client` directory.
    - Run `npm install`.
-   - Create a `.env` file and set `VITE_API_URL=https://jobportal-vud0.onrender.com/`.
+   - Create a `.env` file and set `VITE_API_URL=https://jobportal-vud0.onrender.com/api`.
    - Start dev server: `npm run dev`.
 
 ## 📂 Project Structure
