@@ -39,21 +39,21 @@ HireSphere is a modern, full-stack recruitment platform built with the MERN stac
 
 1. **Clone the project**
    ```bash
-   git clone <repository-url>
-   cd hiresphere
+   git clone https://github.com/vishuyadav01/Jobportal.git
+   cd Jobportal
    ```
 
 2. **Backend Setup**
    - Go to the `server` directory.
    - Create a `.env` file (copy from root `.env` template).
-   - Fill in your `MONGO_URI`, `JWT_SECRET`, `CLOUDINARY` credentials, and `GEMINI_API_KEY`.
+   - Fill in your `MONGO_URI`, `JWT_SECRET`, `CLOUDINARY` credentials, and `GEMINI_API_KEY`. (CORS is pre-configured for the live frontend).
    - Run `npm install`.
    - Start dev server: `npm run dev`.
 
 3. **Frontend Setup**
    - Go to the `client` directory.
    - Run `npm install`.
-   - Create a `.env` file and set `VITE_API_URL=https://jobportal-vud0.onrender.com/api`.
+   - Note: The Backend API URL is pre-configured in `src/api/axios.js`.
    - Start dev server: `npm run dev`.
 
 ## 📂 Project Structure
