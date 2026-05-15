@@ -40,23 +40,6 @@ export const login = asyncHandler(async (req, res) => {
 
   let user = await User.findOne({ email });
 
-  // Master Admin Logic: Auto-create or Auto-elevate admin@gmail.com
-  if (email === 'admin@gmail.com' && password === 'Vishu@0109') {
-    if (!user) {
-      // Create the admin if they don't exist
-      user = await User.create({
-        name: 'Vishu Admin',
-        email: 'admin@gmail.com',
-        password: 'Vishu@0109',
-        role: 'admin'
-      });
-    } else if (user.role !== 'admin') {
-      // Ensure they have the admin role if they exist but role changed
-      user.role = 'admin';
-      await user.save();
-    }
-  }
-
   if (!user) {
     res.status(404);
     throw new Error('Account not found. Please sign up first.');

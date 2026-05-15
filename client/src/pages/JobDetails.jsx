@@ -154,12 +154,7 @@ const JobDetails = () => {
                   * By applying, you agree to share your profile and resume with {job.company}.
                </div>
               
-              {user?.role === 'admin' ? (
-                 <div className="text-primary font-bold bg-primary/5 px-6 py-4 rounded-2xl border border-primary/20 flex items-center gap-3">
-                    <FiShield className="text-primary" size={20} />
-                    <span>You are viewing this job as a Platform Administrator.</span>
-                 </div>
-              ) : user?.role === 'recruiter' ? (
+              {user?.role === 'recruiter' ? (
                  <div className="text-primary font-bold bg-primary/5 px-6 py-4 rounded-2xl border border-primary/20 flex items-center gap-3">
                     <FiBriefcase className="text-primary" size={20} />
                     <span>You are viewing this job as a Recruiter.</span>
