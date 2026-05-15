@@ -117,7 +117,8 @@ export const uploadResume = asyncHandler(async (req, res) => {
     {
       folder: 'resumes',
       resource_type: 'image',
-      public_id: `resume_${user._id}_${Date.now()}.pdf`,
+      public_id: `resume_${user._id}_${Date.now()}`,
+      format: 'pdf',
     },
     async (error, result) => {
       if (error) {
