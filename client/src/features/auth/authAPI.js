@@ -30,8 +30,8 @@ const updateProfile = async (userData) => {
   return response.data;
 };
 
-const uploadResume = async (resumeData) => {
-  const response = await API.post('/auth/upload-resume', resumeData);
+const uploadResume = async (formData) => {
+  const response = await API.post('/auth/upload-resume', formData);
   return response.data;
 };
 
