@@ -166,7 +166,10 @@ const Profile = () => {
                         </div>
                       </div>
                       <button 
-                        onClick={() => window.open(profile.resumeUrl, '_blank', 'noopener,noreferrer')}
+                        onClick={() => {
+                          const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(profile.resumeUrl)}`;
+                          window.open(viewerUrl, '_blank', 'noopener,noreferrer');
+                        }}
                         className="flex items-center gap-2 p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
                         title="Preview Resume"
                       >

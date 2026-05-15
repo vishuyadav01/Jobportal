@@ -106,7 +106,10 @@ const ManageApplicants = () => {
                     
                     {app.candidateId?.resumeUrl ? (
                       <button 
-                        onClick={() => window.open(app.candidateId.resumeUrl, '_blank', 'noopener,noreferrer')}
+                        onClick={() => {
+                          const viewerUrl = `https://docs.google.com/gview?embedded=true&url=${encodeURIComponent(app.candidateId.resumeUrl)}`;
+                          window.open(viewerUrl, '_blank', 'noopener,noreferrer');
+                        }}
                         className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-100 transition-all shadow-sm group"
                       >
                         <FiFileText className="text-primary" /> 
