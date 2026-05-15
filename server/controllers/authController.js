@@ -116,9 +116,8 @@ export const uploadResume = asyncHandler(async (req, res) => {
   const uploadStream = cloudinary.uploader.upload_stream(
     {
       folder: 'resumes',
-      resource_type: 'auto', // Auto-detect content type
+      resource_type: 'image',
       public_id: `resume_${user._id}_${Date.now()}`,
-      format: 'pdf',
     },
     async (error, result) => {
       if (error) {
