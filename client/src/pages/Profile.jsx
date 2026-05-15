@@ -165,14 +165,13 @@ const Profile = () => {
                           <p className="text-[10px] text-emerald-600 mt-1">Verified & Active</p>
                         </div>
                       </div>
-                      <a 
-                        href={profile.resumeUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                      <button 
+                        onClick={() => window.open(profile.resumeUrl, '_blank')}
                         className="p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
+                        title="View Resume"
                       >
                         <FiExternalLink size={18} />
-                      </a>
+                      </button>
                    </div>
                 </div>
               ) : (

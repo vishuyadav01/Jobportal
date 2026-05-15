@@ -108,20 +108,10 @@ export const uploadResume = asyncHandler(async (req, res) => {
     throw new Error('No file uploaded');
   }
 
-  // DEBUG LOGS AS REQUESTED
+  // Temporary debug logs
   console.log('--- RESUME UPLOAD DEBUG ---');
   console.log('Mimetype:', req.file.mimetype);
   console.log('Size:', req.file.size, 'bytes');
-  console.log('Buffer exists:', !!req.file.buffer);
-
-  // TEMPORARY TEST: Save file locally to verify corruption source
-  // If this file opens, the issue is Cloudinary. If it doesn't, the issue is Frontend/Multer.
-  try {
-    fs.writeFileSync('last_upload_test.pdf', req.file.buffer);
-    console.log('✅ Temporary file last_upload_test.pdf saved for local testing');
-  } catch (err) {
-    console.error('❌ Could not save test file:', err);
-  }
 
   try {
     const result = await new Promise((resolve, reject) => {

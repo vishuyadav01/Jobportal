@@ -105,16 +105,14 @@ const ManageApplicants = () => {
                     <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Review Process</h4>
                     
                     {app.candidateId?.resumeUrl ? (
-                      <a 
-                        href={app.candidateId.resumeUrl} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
+                      <button 
+                        onClick={() => window.open(app.candidateId.resumeUrl, '_blank')}
                         className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-100 transition-all shadow-sm group"
                       >
                         <FiFileText className="text-primary" /> 
                         View Full Resume
                         <FiExternalLink className="text-slate-300 group-hover:text-primary" size={14} />
-                      </a>
+                      </button>
                     ) : (
                       <div className="flex items-center gap-3 p-4 bg-amber-50 text-amber-700 rounded-2xl border border-amber-100 text-xs font-bold">
                         <FiInfo size={18} className="flex-shrink-0" />
