@@ -118,8 +118,7 @@ export const uploadResume = asyncHandler(async (req, res) => {
       const cldStream = cloudinary.uploader.upload_stream(
         {
           folder: 'resumes',
-          resource_type: 'image', // Critical for browser PDF preview
-          format: 'pdf',           // Ensures correct PDF mimetype
+          resource_type: 'auto',
         },
         (error, result) => {
           if (error) return reject(error);
