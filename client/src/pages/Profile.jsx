@@ -58,7 +58,7 @@ const Profile = () => {
     });
   };
 
-  const processFile = (file) => {
+  const processFile = async (file) => {
     if (!file) return;
     
     // Validation
@@ -72,20 +72,39 @@ const Profile = () => {
       return;
     }
 
-    const uploadData = new FormData();
-    uploadData.append('resume', file);
+    const cloudName = 'dxn4cxnc6';
+    const uploadPreset = 'resumes_preset'; // You must create an unsigned preset in Cloudinary Settings -> Upload
     
-    setUploadProgress(10); // Simulated start
-    dispatch(uploadResume(uploadData)).then((res) => {
-      setUploadProgress(100);
-      if (res.meta.requestStatus === 'fulfilled') {
+    setUploadProgress(20);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', uploadPreset);
+    formData.append('folder', 'resumes');
+
+    try {
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+      
+      if (data.secure_url) {
+        setUploadProgress(100);
+        const res = await dispatch(uploadResume({ resumeUrl: data.secure_url })).unwrap();
         toast.success('Resume uploaded successfully');
         setTimeout(() => setUploadProgress(0), 1500);
       } else {
-        toast.error(res.payload || 'Upload failed');
-        setUploadProgress(0);
+        throw new Error(data.error?.message || 'Upload failed');
       }
-    });
+    } catch (err) {
+      console.error('Upload error:', err);
+      toast.error(err.message || 'Upload failed');
+      setUploadProgress(0);
+    }
   };
 
   const handleResumeUpload = (e) => {

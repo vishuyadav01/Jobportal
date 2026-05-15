@@ -99,11 +99,13 @@ export const updateProfile = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc    Upload resume (Candidate only)
+// @desc    Update resume URL (Candidate only)
 export const uploadResume = asyncHandler(async (req, res) => {
-  if (!req.file) {
+  const { resumeUrl } = req.body;
+
+  if (!resumeUrl) {
     res.status(400);
-    throw new Error('Please upload a PDF file');
+    throw new Error('Resume URL is required');
   }
 
   const user = await User.findById(req.user._id);
@@ -112,26 +114,11 @@ export const uploadResume = asyncHandler(async (req, res) => {
     throw new Error('User not found');
   }
 
-  try {
-    // Convert buffer to data URI for more reliable upload
-    const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-    
-    const result = await cloudinary.uploader.upload(fileBase64, {
-      folder: 'resumes',
-      resource_type: 'auto',
-      public_id: `resume_${user._id}_${Date.now()}`,
-    });
-
-    user.resumeUrl = result.secure_url;
-    await user.save();
-    
-    res.json({ 
-      message: 'Resume uploaded successfully', 
-      resumeUrl: result.secure_url 
-    });
-  } catch (error) {
-    console.error('Cloudinary Upload Error:', error);
-    res.status(500);
-    throw new Error('Cloudinary upload failed');
-  }
+  user.resumeUrl = resumeUrl;
+  await user.save();
+  
+  res.json({ 
+    message: 'Resume updated successfully', 
+    resumeUrl: user.resumeUrl 
+  });
 });

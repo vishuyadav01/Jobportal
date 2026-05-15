@@ -9,6 +9,6 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/profile', protect, getProfile);
 router.put('/profile', protect, updateProfile);
-router.post('/upload-resume', protect, upload.single('resume'), uploadResume);
+router.post('/upload-resume', protect, uploadResume);
 
 export default router;
