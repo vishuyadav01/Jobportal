@@ -2,6 +2,7 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import cloudinary from '../config/cloudinary.js';
+import streamifier from 'streamifier';
 
 // @desc    Register new user
 export const register = asyncHandler(async (req, res) => {
@@ -113,21 +114,35 @@ export const uploadResume = asyncHandler(async (req, res) => {
   }
 
   try {
-    // Convert buffer to data URI for more reliable upload
-    const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
-    
-    const result = await cloudinary.uploader.upload(fileBase64, {
-      folder: 'resumes',
-      resource_type: 'image',
-      format: 'pdf',
-    });
+    const streamUpload = () => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'resumes',
+            resource_type: 'raw',
+            format: 'pdf',
+          },
+          (error, result) => {
+            if (result) {
+              resolve(result);
+            } else {
+              reject(error);
+            }
+          }
+        );
+
+        streamifier.createReadStream(req.file.buffer).pipe(stream);
+      });
+    };
+
+    const result = await streamUpload();
 
     user.resumeUrl = result.secure_url;
     await user.save();
-    
-    res.json({ 
-      message: 'Resume uploaded successfully', 
-      resumeUrl: result.secure_url 
+
+    res.json({
+      message: 'Resume uploaded successfully',
+      resumeUrl: result.secure_url,
     });
   } catch (error) {
     console.error('Cloudinary Upload Error:', error);
