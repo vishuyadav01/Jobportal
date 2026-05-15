@@ -106,11 +106,11 @@ const ManageApplicants = () => {
                     
                     {app.candidateId?.resumeUrl ? (
                       <button 
-                        onClick={() => window.open(app.candidateId.resumeUrl, '_blank')}
+                        onClick={() => window.open(app.candidateId.resumeUrl, '_blank', 'noopener,noreferrer')}
                         className="flex items-center justify-center gap-2 w-full py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-100 transition-all shadow-sm group"
                       >
                         <FiFileText className="text-primary" /> 
-                        View Full Resume
+                        Preview Candidate Resume
                         <FiExternalLink className="text-slate-300 group-hover:text-primary" size={14} />
                       </button>
                     ) : (

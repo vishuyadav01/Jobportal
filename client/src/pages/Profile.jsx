@@ -166,11 +166,12 @@ const Profile = () => {
                         </div>
                       </div>
                       <button 
-                        onClick={() => window.open(profile.resumeUrl, '_blank')}
-                        className="p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
-                        title="View Resume"
+                        onClick={() => window.open(profile.resumeUrl, '_blank', 'noopener,noreferrer')}
+                        className="flex items-center gap-2 p-2 text-emerald-600 hover:bg-emerald-100 rounded-lg transition-all"
+                        title="Preview Resume"
                       >
                         <FiExternalLink size={18} />
+                        <span className="text-xs font-bold">Preview</span>
                       </button>
                    </div>
                 </div>

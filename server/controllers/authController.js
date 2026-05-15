@@ -3,7 +3,6 @@ import generateToken from '../utils/generateToken.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
-import fs from 'fs'; // For temporary testing
 
 // @desc    Register new user
 export const register = asyncHandler(async (req, res) => {
@@ -40,7 +39,7 @@ export const register = asyncHandler(async (req, res) => {
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  let user = await User.findOne({ email });
+  const user = await User.findOne({ email });
 
   if (!user) {
     res.status(404);
@@ -105,20 +104,22 @@ export const updateProfile = asyncHandler(async (req, res) => {
 export const uploadResume = asyncHandler(async (req, res) => {
   if (!req.file) {
     res.status(400);
-    throw new Error('No file uploaded');
+    throw new Error('Please select a PDF file to upload.');
   }
 
-  // Temporary debug logs
-  console.log('--- RESUME UPLOAD DEBUG ---');
-  console.log('Mimetype:', req.file.mimetype);
-  console.log('Size:', req.file.size, 'bytes');
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found.');
+  }
 
   try {
     const result = await new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
+      const cldStream = cloudinary.uploader.upload_stream(
         {
           folder: 'resumes',
-          resource_type: 'raw',
+          resource_type: 'image', // Critical for browser PDF preview
+          format: 'pdf',           // Ensures correct PDF mimetype
         },
         (error, result) => {
           if (error) return reject(error);
@@ -126,27 +127,18 @@ export const uploadResume = asyncHandler(async (req, res) => {
         }
       );
 
-      streamifier.createReadStream(req.file.buffer).pipe(stream);
+      streamifier.createReadStream(req.file.buffer).pipe(cldStream);
     });
-
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      res.status(404);
-      throw new Error('User not found');
-    }
 
     user.resumeUrl = result.secure_url;
     await user.save();
 
-    console.log('✅ Cloudinary secure_url:', result.secure_url);
-
-    res.json({
+    res.status(200).json({
       success: true,
       resumeUrl: result.secure_url,
     });
   } catch (error) {
-    console.error('❌ Upload failed:', error);
     res.status(500);
-    throw new Error('Upload failed');
+    throw new Error('Resume upload failed. Please try again.');
   }
 });
