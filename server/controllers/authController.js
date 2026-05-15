@@ -3,6 +3,7 @@ import generateToken from '../utils/generateToken.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
+import fs from 'fs'; // For temporary testing
 
 // @desc    Register new user
 export const register = asyncHandler(async (req, res) => {
@@ -107,53 +108,55 @@ export const uploadResume = asyncHandler(async (req, res) => {
     throw new Error('No file uploaded');
   }
 
-  const user = await User.findById(req.user._id);
+  // DEBUG LOGS AS REQUESTED
+  console.log('--- RESUME UPLOAD DEBUG ---');
+  console.log('Mimetype:', req.file.mimetype);
+  console.log('Size:', req.file.size, 'bytes');
+  console.log('Buffer exists:', !!req.file.buffer);
 
-  if (!user) {
-    res.status(404);
-    throw new Error('User not found');
+  // TEMPORARY TEST: Save file locally to verify corruption source
+  // If this file opens, the issue is Cloudinary. If it doesn't, the issue is Frontend/Multer.
+  try {
+    fs.writeFileSync('last_upload_test.pdf', req.file.buffer);
+    console.log('✅ Temporary file last_upload_test.pdf saved for local testing');
+  } catch (err) {
+    console.error('❌ Could not save test file:', err);
   }
 
   try {
-    const uploadFromBuffer = () => {
-      return new Promise((resolve, reject) => {
-        const cldStream = cloudinary.uploader.upload_stream(
-          {
-            folder: 'resumes',
-            resource_type: 'raw',
-            use_filename: true,
-            unique_filename: true,
-            overwrite: false,
-            format: 'pdf',
-          },
-          (error, result) => {
-            if (error) {
-              reject(error);
-            } else {
-              resolve(result);
-            }
-          }
-        );
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'resumes',
+          resource_type: 'raw',
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        }
+      );
 
-        streamifier.createReadStream(req.file.buffer).pipe(cldStream);
-      });
-    };
+      streamifier.createReadStream(req.file.buffer).pipe(stream);
+    });
 
-    const result = await uploadFromBuffer();
-    
-    // Debug log as requested
-    console.log('Cloudinary Upload Result:', result);
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
 
     user.resumeUrl = result.secure_url;
     await user.save();
 
-    res.status(200).json({
+    console.log('✅ Cloudinary secure_url:', result.secure_url);
+
+    res.json({
       success: true,
       resumeUrl: result.secure_url,
     });
   } catch (error) {
-    console.error('Upload Error:', error);
+    console.error('❌ Upload failed:', error);
     res.status(500);
-    throw new Error('Resume upload failed');
+    throw new Error('Upload failed');
   }
 });
