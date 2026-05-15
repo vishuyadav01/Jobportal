@@ -3,6 +3,7 @@ import generateToken from '../utils/generateToken.js';
 import asyncHandler from '../middleware/asyncHandler.js';
 import cloudinary from '../config/cloudinary.js';
 import streamifier from 'streamifier';
+import fs from 'fs';
 
 // @desc    Register new user
 export const register = asyncHandler(async (req, res) => {
@@ -105,6 +106,20 @@ export const uploadResume = asyncHandler(async (req, res) => {
   if (!req.file) {
     res.status(400);
     throw new Error('Please select a PDF file to upload.');
+  }
+
+  // 🔎 CRITICAL DEBUG LOGS
+  console.log('--- FRONTEND PAYLOAD VERIFICATION ---');
+  console.log('Original Name:', req.file.originalname);
+  console.log('Mimetype:', req.file.mimetype);
+  console.log('Size:', req.file.size, 'bytes');
+
+  // 🧪 LOCAL INTEGRITY TEST
+  try {
+    fs.writeFileSync('debug.pdf', req.file.buffer);
+    console.log('✅ Local file "debug.pdf" saved. OPEN THIS FILE ON YOUR COMPUTER TO TEST.');
+  } catch (err) {
+    console.error('❌ Could not save debug file:', err);
   }
 
   const user = await User.findById(req.user._id);
