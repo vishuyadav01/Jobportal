@@ -118,7 +118,8 @@ export const uploadResume = asyncHandler(async (req, res) => {
     
     const result = await cloudinary.uploader.upload(fileBase64, {
       folder: 'resumes',
-      resource_type: 'auto',
+      resource_type: 'image',
+      format: 'pdf',
     });
 
     user.resumeUrl = result.secure_url;
