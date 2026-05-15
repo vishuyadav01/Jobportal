@@ -31,7 +31,7 @@ const updateProfile = async (userData) => {
 };
 
 const uploadResume = async (formData) => {
-  const response = await API.post('/auth/upload-resume', formData);
+  const response = await API.post('/auth/resume', formData);
   return response.data;
 };
 

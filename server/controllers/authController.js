@@ -104,49 +104,56 @@ export const updateProfile = asyncHandler(async (req, res) => {
 export const uploadResume = asyncHandler(async (req, res) => {
   if (!req.file) {
     res.status(400);
-    throw new Error('Please upload a PDF file');
+    throw new Error('No file uploaded');
   }
 
   const user = await User.findById(req.user._id);
+
   if (!user) {
     res.status(404);
     throw new Error('User not found');
   }
 
   try {
-    const streamUpload = () => {
+    const uploadFromBuffer = () => {
       return new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
+        const cldStream = cloudinary.uploader.upload_stream(
           {
             folder: 'resumes',
             resource_type: 'raw',
+            use_filename: true,
+            unique_filename: true,
+            overwrite: false,
             format: 'pdf',
           },
           (error, result) => {
-            if (result) {
-              resolve(result);
-            } else {
+            if (error) {
               reject(error);
+            } else {
+              resolve(result);
             }
           }
         );
 
-        streamifier.createReadStream(req.file.buffer).pipe(stream);
+        streamifier.createReadStream(req.file.buffer).pipe(cldStream);
       });
     };
 
-    const result = await streamUpload();
+    const result = await uploadFromBuffer();
+    
+    // Debug log as requested
+    console.log('Cloudinary Upload Result:', result);
 
     user.resumeUrl = result.secure_url;
     await user.save();
 
-    res.json({
-      message: 'Resume uploaded successfully',
+    res.status(200).json({
+      success: true,
       resumeUrl: result.secure_url,
     });
   } catch (error) {
-    console.error('Cloudinary Upload Error:', error);
+    console.error('Upload Error:', error);
     res.status(500);
-    throw new Error('Cloudinary upload failed');
+    throw new Error('Resume upload failed');
   }
 });
