@@ -13,7 +13,11 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: 'https://jobportal-pearl-eight.vercel.app',
+  origin: [
+    'https://jobportal-pearl-eight.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:3000'
+  ],
   credentials: true
 }));
 
